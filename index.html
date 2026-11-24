@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ATHAR – Volunteering made easy</title>
+<meta name="description" content="Interactive prototype: one trusted place to find, join and coordinate volunteering in Egypt.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Hanken+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#512a25;--teal:#df5749;--teal-d:#c94b3e;--sun:#ffd663;--mist:#f8dfcb;--line:#e8ad8d;--card:#f6d5bc;--mute:#80564d;--red:#d94e42;--ok:#57865a;--r:14px;color-scheme:light}
+
+*{box-sizing:border-box}
+html{scroll-padding-top:70px}
+body{margin:0;background:linear-gradient(135deg,#d95346 0%,#ef7958 42%,#ffb66f 72%,#ffd663 100%);background-attachment:fixed;color:var(--ink);font:16px/1.5 "Hanken Grotesk",system-ui,sans-serif}
+h1,h2,h3,.logo{font-family:"Bricolage Grotesque","Hanken Grotesk",system-ui,sans-serif;line-height:1.15;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.top{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 20px;background:linear-gradient(105deg,#d54e42 0%,#ef7658 46%,#ffd663 100%);border-bottom:1px solid rgba(255,255,255,.35);box-shadow:0 4px 18px rgba(160,75,48,.12)}
+.logo{font-size:1.5rem;font-weight:800;text-decoration:none;color:#fff2e5}
+.logo span{color:#fff0b5;margin-right:6px}
+.seg{display:flex;background:rgba(116,48,36,.16);border:1px solid rgba(255,255,255,.45);border-radius:99px;padding:3px}
+.seg button{border:0;background:none;padding:7px 14px;border-radius:99px;cursor:pointer;font-weight:700;color:#542b25}
+.seg button[aria-selected=true]{background:#f9dfc8;color:#c94b3e;box-shadow:0 2px 8px rgba(115,48,34,.12)}
+.tabs{display:flex;gap:4px;padding:10px 20px 0;max-width:1000px;margin:auto;overflow-x:auto}
+.tabs a{padding:8px 16px;border-radius:99px;text-decoration:none;color:var(--mute);font-weight:600;white-space:nowrap;transition:background .18s,color .18s}
+.tabs a.on{background:linear-gradient(100deg,#df5749,#f18a5e);color:#512a25;box-shadow:0 3px 10px rgba(210,83,61,.18)}
+main{max-width:1000px;margin:auto;padding:20px}
+h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;max-width:18ch}
+h2{font-size:1.3rem;margin:24px 0 10px}
+.lead{color:var(--mute);max-width:56ch;margin:8px 0 18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.card{background:#f4c7a8;color:#512a25;border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 5px 18px rgba(153,82,54,.07)}
+.card h3{font-size:1.1rem;color:#512a25}
+.meta{color:#80564d;font-size:.9rem}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sp{justify-content:space-between}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:99px;background:#f8d9c0;font-size:.82rem;border:1px solid #e8ad8d;color:#633d34}
+.chip.ok{color:#47784d}.chip.urgent{background:#ff8874;color:#632c25;border-color:#e96b58}.chip.match{background:#ffd663;color:#512a25;border-color:#f0c14c;font-weight:700}
+.bar{height:8px;border-radius:9px;background:#eec2a3;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#d94e42,#f18b5e,#ffc94d);border-radius:9px}
+.btn{border:0;border-radius:10px;padding:9px 16px;background:linear-gradient(105deg,#df5749,#ef7957);color:#fff2e5;font-weight:700;cursor:pointer;box-shadow:0 3px 9px rgba(207,75,58,.16);transition:transform .16s,filter .16s}
+.btn:hover{filter:saturate(1.12) brightness(.97);transform:translateY(-1px)}
+.btn.alt{background:#f2c39f;color:#813c32;border:1.5px solid #d8795f;box-shadow:none}
+.btn.sm{padding:5px 11px;font-size:.88rem}
+.btn[disabled]{opacity:.5;cursor:default}
+.link{background:none;border:0;color:#d65345;text-decoration:underline;cursor:pointer;padding:0}
+.filters{display:grid;grid-template-columns:2fr repeat(3,1fr);gap:8px;margin-bottom:14px}
+input,select,textarea{padding:9px 12px;border:1px solid #d99b79;border-radius:10px;background:#f7d8c0;color:#512a25;width:100%}
+label{display:block;font-weight:500;font-size:.92rem;margin:10px 0 4px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:16px 0}
+.stat{background:linear-gradient(120deg,#d54e42 0%,#ef7958 58%,#f6a75e 100%);color:#fff2e5;border-radius:var(--r);padding:14px;box-shadow:0 5px 16px rgba(202,76,55,.14)}
+.stat b{font:800 2rem "Bricolage Grotesque",sans-serif;display:block;color:#ffe17a}
+.pick{display:flex;flex-wrap:wrap;gap:6px}
+.pick button{border:1px solid #d99b79;background:#f7d8c0;color:#512a25;border-radius:99px;padding:5px 12px;cursor:pointer}
+.pick button[aria-pressed=true]{background:#e65d4d;color:#fff5e9;border-color:#e65d4d}
+.person{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line)}
+.note{border-left:4px solid #e98a54;padding:6px 12px;background:#f3c9aa;color:#633d34;border-radius:6px;font-size:.92rem}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.plan .price{font:800 1.8rem "Bricolage Grotesque",sans-serif}
+.plan ul{padding-left:18px;margin:4px 0;flex:1}
+.empty{text-align:center;padding:40px 10px;color:#80564d}
+dialog{border:1px solid #d99b79;border-radius:18px;padding:22px;width:min(520px,94vw);background:#f4c7a8;color:#512a25}
+dialog::backdrop{background:rgba(83,38,29,.48);backdrop-filter:blur(2px)}
+#toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,90px);background:linear-gradient(100deg,#d54e42,#ef7958);color:#fff2e5;padding:10px 18px;border-radius:99px;transition:transform .25s;z-index:9;max-width:92vw;box-shadow:0 5px 18px rgba(95,42,30,.2)}
+#toast.show{transform:translate(-50%,0)}
+.foot{max-width:1000px;margin:20px auto;padding:0 20px 30px;color:var(--mute);font-size:.85rem}
+@media(max-width:700px){.filters{grid-template-columns:1fr 1fr}.filters input{grid-column:1/-1}.logo{font-size:1.2rem}.seg button{padding:6px 10px;font-size:.88rem}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Login and account controls */
+.account-area{display:flex;align-items:center;gap:10px;color:#fff4e8;font-weight:700;font-size:.9rem}
+.account-area [hidden]{display:none!important}
+.login-wrap{min-height:calc(100vh - 170px);display:grid;place-items:center;padding:28px 16px}
+.login-card{width:min(480px,100%);background:linear-gradient(145deg,#f5d2b8,#efc09e);border:1px solid #d99b79;border-radius:22px;padding:clamp(22px,5vw,38px);box-shadow:0 16px 42px rgba(104,47,34,.2);color:#512a25}
+.login-mark{font:800 1.2rem "Bricolage Grotesque",sans-serif;color:#d65345;margin-bottom:24px}
+.login-mark span{letter-spacing:.14em;font-size:.8rem;margin-left:8px;color:#75463b}
+.eyebrow{font-size:.75rem;font-weight:800;letter-spacing:.16em;color:#a24f40;margin:0 0 8px}
+.login-card h1{font-size:clamp(2rem,6vw,2.7rem);color:#512a25}
+.login-card .lead{color:#80564d}
+.login-card label{color:#633d34}
+.login-card input,.login-card select{background:#f9e1ce;border-color:#d99b79;color:#512a25}
+.login-submit{width:100%;margin-top:20px;padding:12px}
+.login-note{margin-top:18px;padding:12px 14px;border-radius:12px;background:#edbb98;color:#633d34;font-size:.85rem;line-height:1.5}
+@media(max-width:600px){.top{flex-wrap:wrap}.account-area{margin-left:auto}.login-card{border-radius:17px}}
+.seg[hidden]{display:none!important}
+.role-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}
+.role-choice{background:linear-gradient(145deg,#f5d2b8,#efc09e);border:1px solid #d99b79;border-radius:20px;padding:24px;color:#512a25;box-shadow:0 12px 30px rgba(104,47,34,.16);display:flex;flex-direction:column;gap:12px}
+.role-choice h2{margin:0;font-size:1.35rem}.role-choice p{color:#80564d;margin:0;flex:1}.role-icon{font-size:2rem}
+.auth-back{margin-bottom:14px}.auth-error{color:#8f2e26;font-weight:700;min-height:1.4em;margin:10px 0 0}
+@media(max-width:650px){.role-choice-grid{grid-template-columns:1fr}.role-choice{padding:20px}}
+
+.auth-switch{display:flex;gap:8px;margin:16px 0}
+.auth-switch .active{background:#df5749;color:#fff2e5}
+#signupFields[hidden]{display:none}
+.app-contact{display:block;color:#80564d;font-size:.78rem;margin-top:3px}
+.notice-card{margin:10px 0}
+
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="logo" href="#discover" aria-label="ATHAR home"><span>أثر</span> athar</a>
+  <div class="account-area"><span id="account-label">Demo mode</span><button id="logout" class="btn alt sm" type="button" hidden>Log out</button></div>
+  <div class="seg" role="tablist" aria-label="Switch view">
+    <button data-role="vol" role="tab">I'm a volunteer</button>
+    <button data-role="ngo" role="tab">I'm an NGO</button>
+  </div>
+</header>
+<nav class="tabs" id="tabs" aria-label="Sections"></nav>
+<main id="app" tabindex="-1"></main>
+<dialog id="dlg"></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+<footer class="foot">Prototype for Group 6 – Business Model &amp; Value Proposition Canvas. Sample data only; prices are concepts to test, not confirmed. <button class="link" id="reset">Reset demo</button></footer>
+<script>
+/* ATHAR prototype – plain JS, no build step. State is saved in localStorage. */
+const AREAS=['Maadi','Nasr City','Giza','Heliopolis','6th October','Online'];
+const CAUSES=['Food','Education','Health','Environment'];
+const SKILLS=['Organizing','Teaching','First aid','Design','Driving','Photography'];
+const DAYS=['Sat','Sun','Mon','Tue','Wed','Thu','Fri'];
+const ME='Sara Hassan', MY_NGO='Nour Food Bank';
+const seed=()=>({role:'vol',
+ profile:{area:'Maadi',interests:['Food','Education'],skills:['Organizing'],days:['Fri','Sat']},
+ hours:6,notes:[],
+ opps:[
+ {id:1,title:'Pack Ramadan-style meal boxes',ngo:MY_NGO,ver:1,area:'Nasr City',cause:'Food',skills:['Organizing'],day:'Fri',date:'6 Nov',time:'10:00–14:00',hrs:4,cap:40,taken:28,urgent:1,desc:'Help pack 10,000 meal boxes for families. Gloves and aprons provided. Last time only 7,500 were packed, so every extra pair of hands counts.',apps:[{n:'Omar Adel',s:'pending'},{n:'Hana Fouad',s:'pending'},{n:'Youssef Gamal',s:'confirmed'}],ups:[]},
+ {id:2,title:'Weekend reading circle for kids',ngo:'Bright Minds Egypt',ver:1,area:'Maadi',cause:'Education',skills:['Teaching'],day:'Sat',date:'7 Nov',time:'11:00–13:00',hrs:2,cap:12,taken:7,desc:'Read aloud and run a short activity with children aged 6–9.',apps:[],ups:[]},
+ {id:3,title:'Free health check-up day',ngo:'Shifa Community Clinic',ver:1,area:'Giza',cause:'Health',skills:['First aid'],day:'Sun',date:'8 Nov',time:'09:00–15:00',hrs:6,cap:20,taken:11,desc:'Support registration and guide patients between stations.',apps:[],ups:[]},
+ {id:4,title:'Nile corniche clean-up',ngo:'Green Delta',ver:1,area:'Maadi',cause:'Environment',skills:['Organizing'],day:'Fri',date:'13 Nov',time:'07:00–10:00',hrs:3,cap:60,taken:35,desc:'Bring comfortable shoes. Bags, gloves and water are provided.',apps:[],ups:[]},
+ {id:5,title:'Design posters for a food drive',ngo:MY_NGO,ver:1,area:'Online',cause:'Food',skills:['Design'],day:'Tue',date:'10 Nov',time:'Flexible',hrs:3,cap:4,taken:3,urgent:1,desc:'Create 3 posters in Arabic and English. Work from home, deliver within the week.',apps:[],ups:[]},
+ {id:6,title:'Homework help evenings',ngo:'Bright Minds Egypt',ver:1,area:'Heliopolis',cause:'Education',skills:['Teaching'],day:'Wed',date:'11 Nov',time:'17:00–19:00',hrs:2,cap:10,taken:4,desc:'Help school students with maths and English.',apps:[],ups:[]},
+ {id:7,title:'Photograph our winter blanket drive',ngo:'Warm Hands',ver:0,area:'6th October',cause:'Health',skills:['Photography'],day:'Sat',date:'14 Nov',time:'12:00–16:00',hrs:4,cap:3,taken:3,desc:'Capture the day for our reports. Note: this NGO is still being verified.',apps:[],ups:[]}
+]});
+let S=(()=>{try{return JSON.parse(localStorage.getItem('athar'))||seed()}catch(e){return seed()}})();
+const save=()=>{try{localStorage.setItem('athar',JSON.stringify(S))}catch(e){}};
+const accountStore=()=>{try{return JSON.parse(localStorage.getItem('athar_accounts')||'[]')}catch(e){return []}};
+const currentAccount=()=>{try{return JSON.parse(localStorage.getItem('athar_current')||'null')}catch(e){return null}};
+const updateAccount=a=>{const all=accountStore(),i=all.findIndex(x=>x.email===a.email);if(i<0)all.push(a);else all[i]=a;localStorage.setItem('athar_accounts',JSON.stringify(all));localStorage.setItem('athar_current',JSON.stringify(a))};
+
+const $=(q,el=document)=>el.querySelector(q), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const filled=o=>o.taken+o.apps.filter(a=>a.s==='confirmed').length;
+const left=o=>Math.max(0,o.cap-filled(o));
+const mine=o=>o.apps.find(a=>a.you);
+function match(o){const p=S.profile;let s=0;
+ if(p.interests.includes(o.cause))s+=35; if(o.area==='Online'||o.area===p.area)s+=25;
+ if(o.skills.some(k=>p.skills.includes(k)))s+=25; if(p.days.includes(o.day)||o.day==='Flexible')s+=15; return s}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2600)}
+const pick=(arr,key,sel)=>`<div class="pick" data-pick="${key}">${arr.map(x=>`<button type="button" aria-pressed="${sel.includes(x)}" data-v="${x}">${x}</button>`).join('')}</div>`;
+const bar=o=>`<div class="bar" aria-hidden="true"><i style="width:${Math.min(100,filled(o)/o.cap*100)}%"></i></div>`;
+const spots=o=>left(o)?`${left(o)} of ${o.cap} spots left`:'Full – join waiting list';
+
+/* ---------- views ---------- */
+const V={
+ vol:{discover:'Discover',mine:'My activities',profile:'My profile',notifications:'Notifications'},
+ ngo:{dash:'Dashboard',post:'Post activity',plans:'Plans'}};
+const filt={q:'',area:'',cause:'',day:''};
+function oppCard(o){const m=match(o),a=mine(o);
+ return `<article class="card"><div class="row sp"><span class="chip match" title="Based on your interests, area, skills and days">${m}% match</span>${o.urgent?'<span class="chip urgent">Urgent</span>':''}</div>
+ <h3>${esc(o.title)}</h3>
+ <div class="meta">${esc(o.ngo)} ${o.ver?'<span class="chip ok">✔ Verified</span>':'<span class="chip">Pending verification</span>'}</div>
+ <div class="meta">${o.day} ${o.date} · ${o.time} · ${esc(o.area)}</div>
+ ${bar(o)}<div class="meta">${spots(o)}</div>
+ <div class="row sp"><button class="btn alt sm" data-act="open" data-id="${o.id}">Details</button>
+ ${a?`<span class="chip ${a.s==='confirmed'?'ok':''}">${a.s==='confirmed'?'Confirmed':'Applied – awaiting NGO'}</span>`:`<button class="btn sm" data-act="apply" data-id="${o.id}">${left(o)?'Apply':'Join waiting list'}</button>`}</div></article>`}
+function discover(){
+ const list=S.opps.filter(o=>(!filt.q||(o.title+o.ngo+o.desc).toLowerCase().includes(filt.q.toLowerCase()))&&(!filt.area||o.area===filt.area)&&(!filt.cause||o.cause===filt.cause)&&(!filt.day||o.day===filt.day)).sort((a,b)=>match(b)-match(a));
+ const opt=(a,l)=>`<option value="">${l}</option>`+a.map(x=>`<option ${filt[l==='Any area'?'area':l==='Any cause'?'cause':'day']===x?'selected':''}>${x}</option>`).join('');
+ return `<h1>Find volunteering that fits your week</h1><p class="lead">Every opportunity in one place, from verified NGOs, ranked by how well it matches you, ${esc(ME.split(' ')[0])}.</p>
+ <div class="filters"><input id="q" type="search" placeholder="Search activities or NGOs" value="${esc(filt.q)}" aria-label="Search">
+ <select data-f="area" aria-label="Area">${opt(AREAS,'Any area')}</select><select data-f="cause" aria-label="Cause">${opt(CAUSES,'Any cause')}</select><select data-f="day" aria-label="Day">${opt(DAYS,'Any day')}</select></div>
+ <div class="grid" id="list">${list.map(oppCard).join('')||'<p class="empty">No activities match these filters. Clear a filter to see more.</p>'}</div>`}
+function minePage(){
+ const my=S.opps.filter(mine);
+ const att=my.filter(o=>mine(o).att).length;
+ const notes=S.notes.slice().reverse();
+ return `<h1>Your activities and impact</h1>
+ <div class="stats"><div class="stat"><b>${S.hours+my.filter(o=>mine(o).att).reduce((t,o)=>t+o.hrs,0)}</b>volunteer hours</div><div class="stat"><b>${att+2}</b>activities completed</div><div class="stat"><b>${my.length}</b>upcoming / applied</div></div>
+ <h2>Upcoming and applied</h2><div class="grid">${my.map(oppCard).join('')||'<p class="empty">Nothing yet. Open Discover and apply to your first activity.</p>'}</div>
+ <h2>Updates from NGOs</h2>${notes.map(n=>`<p class="note"><b>${esc(n.ngo)}:</b> ${esc(n.t)}</p>`).join('')||'<p class="meta">No updates yet. You will see reminders and instructions here.</p>'}`}
+function notifications(){const ns=(S.userNotices||[]).slice().reverse(),a=currentAccount()||{};
+ return `<h1>Notifications</h1><p class="lead">Application updates and confirmation messages for your account.</p>
+ <div class="card"><h2>Delivery preferences</h2><label for="notifyChannel">Send confirmations by</label><select id="notifyChannel"><option value="both" ${a.channel==='both'?'selected':''}>Email and SMS</option><option value="email" ${a.channel==='email'?'selected':''}>Email only</option><option value="sms" ${a.channel==='sms'?'selected':''}>SMS only</option></select>
+ <p class="meta">Email: ${esc(a.email||'Not provided')} · Phone: ${esc(a.phone||'Not provided')}</p></div>
+ <h2>Recent updates</h2>${ns.map(n=>`<article class="card notice-card"><div class="row sp"><b>${esc(n.title)}</b><span class="chip">${esc(n.status||'Demo queued')}</span></div><p>${esc(n.body)}</p><p class="meta">${esc(n.time)} · ${esc(n.channel)} · ${esc(n.email||'')} ${esc(n.phone||'')}</p></article>`).join('')||'<p class="empty">No notifications yet. NGO decisions will appear here.</p>'}`;
+}
+function profile(){const p=S.profile;
+ return `<h1>Tell us what suits you</h1><p class="lead">We use this to rank opportunities and send urgent alerts that fit.</p>
+ <div class="card" style="max-width:560px"><label>Area</label><select id="parea">${AREAS.filter(a=>a!=='Online').map(a=>`<option ${a===p.area?'selected':''}>${a}</option>`).join('')}</select>
+ <label>Causes you care about</label>${pick(CAUSES,'interests',p.interests)}
+ <label>Your skills</label>${pick(SKILLS,'skills',p.skills)}
+ <label>Days you are free</label>${pick(DAYS,'days',p.days)}</div>`}
+function ngoDash(){
+ const os=S.opps.filter(o=>o.ngo===MY_NGO);
+ const pend=os.reduce((t,o)=>t+o.apps.filter(a=>a.s==='pending').length,0);
+ return `<h1>${MY_NGO}: recruitment dashboard</h1>
+ <div class="stats"><div class="stat"><b>${os.length}</b>live activities</div><div class="stat"><b>${pend}</b>awaiting your decision</div><div class="stat"><b>${os.reduce((t,o)=>t+left(o),0)}</b>open spots</div></div>
+ ${os.map(o=>`<article class="card" style="margin-bottom:14px"><div class="row sp"><h3>${esc(o.title)}</h3><span class="meta">${o.day} ${o.date} · ${o.time}</span></div>
+ ${bar(o)}<div class="meta">${filled(o)} of ${o.cap} confirmed · ${left(o)} spots left ${left(o)>0&&o.urgent?'· <b style="color:var(--red)">recruiting urgently</b>':''}</div>
+ ${o.apps.map((a,i)=>`<div class="person"><span>${esc(a.n)}${a.you?' (you, from the volunteer view)':''} <span class="chip">${a.s}${a.att?' · attended':''}</span><small class="app-contact">${esc(a.email||'Email not supplied')} · ${esc(a.phone||'Phone not supplied')}</small></span>
+ <span class="row">${a.s==='pending'?`<button class="btn sm" data-act="ok" data-id="${o.id}" data-i="${i}">Confirm</button>`:''}${a.s==='confirmed'&&!a.att?`<button class="btn alt sm" data-act="att" data-id="${o.id}" data-i="${i}">Mark attended</button>`:''}</span></div>`).join('')||'<p class="meta">No applications yet.</p>'}
+ <div class="row"><input id="u${o.id}" placeholder="Write an update or task briefing" aria-label="Update for ${esc(o.title)}" style="flex:1;min-width:200px"><button class="btn sm" data-act="send" data-id="${o.id}">Send to volunteers</button></div></article>`).join('')}`}
+function post(){return `<h1>Post a new activity</h1><p class="lead">Set the skills and capacity you need. Matching volunteers see it first.</p>
+ <form id="pf" class="card" style="max-width:560px"><label for="t">Title</label><input id="t" required maxlength="70">
+ <label for="d">What volunteers will do</label><textarea id="d" rows="3" required></textarea>
+ <div class="row"><div style="flex:1"><label for="a">Area</label><select id="a">${AREAS.map(a=>`<option>${a}</option>`).join('')}</select></div><div style="flex:1"><label for="c">Cause</label><select id="c">${CAUSES.map(a=>`<option>${a}</option>`).join('')}</select></div></div>
+ <div class="row"><div style="flex:1"><label for="dy">Day</label><select id="dy">${DAYS.map(a=>`<option>${a}</option>`).join('')}</select></div><div style="flex:1"><label for="cp">Volunteers needed</label><input id="cp" type="number" min="1" max="500" value="20" required></div></div>
+ <label>Skill needed</label>${pick(SKILLS,'nskills',['Organizing'])}
+ <label><input type="checkbox" id="ur" style="width:auto"> Mark as urgent</label><button class="btn" style="margin-top:12px">Publish activity</button></form>`}
+function plans(){const P=(n,pr,f)=>`<div class="card plan"><h3>${n}</h3><div class="price">${pr} <small class="meta">EGP / month</small></div><ul>${f.map(x=>`<li>${x}</li>`).join('')}</ul><button class="btn alt" data-act="plan" data-n="${n}">Request a pilot</button></div>`;
+ return `<h1>Plans for NGOs</h1><p class="lead">Concept pricing from our business model. Not confirmed, and we will test it with NGOs and CSR partners.</p><div class="plans">
+ ${P('Pro','10,000',['Post unlimited activities','Skill and location matching','Registration and capacity tracking','Automated reminders'])}
+ ${P('Premium','20,000',['Everything in Pro','Dedicated coordinator support','Attendance and engagement insights','Impact reports for CSR sponsors'])}
+ ${P('CSR sponsorship','Custom',['Sponsor verified NGO activities','Employee volunteering coordination','Measurable impact reporting'])}</div>`}
+const R={discover,mine:minePage,profile,notifications,dash:ngoDash,post,plans};
+
+
+let AUTH_ROLE = null;
+let AUTH_MODE = 'login';
+function loginPage(){
+ if(!AUTH_ROLE)return `<section class="login-wrap"><div style="width:min(850px,100%)">
+  <div class="login-card" style="width:100%;text-align:center"><div class="login-mark">أثر <span>ATHAR</span></div><p class="eyebrow">WELCOME TO ATHAR</p><h1 style="max-width:none">Make time for good.</h1><p class="lead" style="margin:10px auto 0">Choose your workspace to continue.</p></div>
+  <div class="role-choice-grid">
+   <article class="role-choice"><div class="role-icon">🙋</div><h2>Volunteer dashboard</h2><p>Discover opportunities, apply to activities, manage your profile and receive updates from NGOs.</p><button class="btn" type="button" data-auth-role="vol" onclick="window.atharChooseRole('vol')">Continue as volunteer</button></article>
+   <article class="role-choice"><div class="role-icon">🏢</div><h2>NGO dashboard</h2><p>Publish activities, review applications, confirm attendance and coordinate volunteers.</p><button class="btn" type="button" data-auth-role="ngo" onclick="window.atharChooseRole('ngo')">Continue as NGO</button></article>
+  </div><p class="login-note" style="max-width:850px;margin:16px auto 0"><b>Prototype note:</b> create a separate account for each workspace. Accounts are saved in this browser only.</p>
+ </div></section>`;
+ const label=AUTH_ROLE==='ngo'?'NGO':'Volunteer', nameLabel=AUTH_ROLE==='ngo'?'NGO name':'Full name';
+ return `<section class="login-wrap"><div class="login-card"><button class="link auth-back" type="button" data-auth-back>← Choose another workspace</button>
+  <div class="login-mark">أثر <span>ATHAR</span></div><p class="eyebrow">${label.toUpperCase()} WORKSPACE</p>
+  <h1>${AUTH_MODE==='signup'?'Create your account':'Welcome back.'}</h1><p class="lead">${AUTH_MODE==='signup'?'Set up your '+label.toLowerCase()+' account to get started.':'Sign in to your '+label.toLowerCase()+' dashboard.'}</p>
+  <div class="auth-switch"><button type="button" class="btn ${AUTH_MODE==='login'?'':'alt'} sm ${AUTH_MODE==='login'?'active':''}" data-authmode="login" onclick="window.atharSetAuthMode('login')">Log in</button><button type="button" class="btn ${AUTH_MODE==='signup'?'':'alt'} sm ${AUTH_MODE==='signup'?'active':''}" data-authmode="signup" onclick="window.atharSetAuthMode('signup')">Create account</button></div>
+  <form id="authForm" novalidate><input type="hidden" id="authRole" value="${AUTH_ROLE}">
+   <div id="signupFields" ${AUTH_MODE==='signup'?'':'hidden'}><label for="authName">${nameLabel}</label><input id="authName" autocomplete="name" placeholder="${nameLabel}"><label for="authPhone">Phone number</label><input id="authPhone" type="tel" autocomplete="tel" placeholder="+20 1X XXX XXXX"></div>
+   <label for="authEmail">Email address</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com" required>
+   <label for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="${AUTH_MODE==='signup'?'new-password':'current-password'}" minlength="4" placeholder="At least 4 characters" required>
+   <button class="btn login-submit" id="authSubmit" type="button" onclick="window.atharAuthSubmit()">${AUTH_MODE==='signup'?'Create '+label.toLowerCase()+' account':'Log in to '+label.toLowerCase()+' dashboard'}</button><p id="authError" class="auth-error" role="alert"></p>
+  </form><div class="login-note"><b>Prototype only:</b> accounts are stored in this browser. Real email/SMS verification and message delivery require a secure backend and provider integration.</div>
+ </div></section>`;
+}
+
+/* ---------- render & events ---------- */
+function render(){
+ const session=currentAccount(),label=$('#account-label'),logout=$('#logout');
+ if(label)label.textContent=session?`${session.name} · ${session.role==='ngo'?'NGO':'Volunteer'}`:'Sign in';
+ if(logout)logout.hidden=!session;
+ if(!session){$('#tabs').innerHTML='';$('.seg').hidden=true;$('#app').innerHTML=loginPage();return}
+  $('.seg').hidden=false;
+ S.role=session.role;
+ if(!V[S.role][location.hash.slice(1)])location.hash=Object.keys(V[S.role])[0];
+ const v=location.hash.slice(1);
+ document.querySelectorAll('[data-role]').forEach(b=>b.setAttribute('aria-selected',b.dataset.role===S.role));
+ $('#tabs').innerHTML=Object.entries(V[S.role]).map(([k,l])=>`<a href="#${k}" class="${k===v?'on':''}" ${k===v?'aria-current="page"':''}>${l}</a>`).join('');
+ $('#app').innerHTML=R[v]();}
+function openDlg(o){const a=mine(o);
+ $('#dlg').innerHTML=`<h2 style="margin-top:0">${esc(o.title)}</h2><p class="meta">${esc(o.ngo)} · ${o.ver?'Verified NGO':'Pending verification'}</p><p>${esc(o.desc)}</p>
+ <p class="meta"><b>When:</b> ${o.day} ${o.date}, ${o.time} (${o.hrs} h)<br><b>Where:</b> ${esc(o.area)}<br><b>Skills:</b> ${o.skills.join(', ')}<br><b>Spots:</b> ${spots(o)}</p>
+ ${!o.ver?'<p class="note">This NGO has not finished verification. Check details before you commit.</p>':''}
+ <div class="row sp"><button class="btn alt" data-act="close">Close</button>${a?'':`<button class="btn" data-act="apply" data-id="${o.id}">Apply now</button>`}</div>`;$('#dlg').showModal()}
+const get=id=>S.opps.find(o=>o.id==id);
+window.atharChooseRole=function(role){AUTH_ROLE=role;AUTH_MODE='login';render();};
+window.atharSetAuthMode=function(mode){AUTH_MODE=mode;render();};
+document.addEventListener('click',e=>{
+ const choose=e.target.closest('[data-auth-role]');
+ if(choose){AUTH_ROLE=choose.dataset.authRole;AUTH_MODE='login';render();return}
+ const mode=e.target.closest('[data-authmode]');
+ if(mode){AUTH_MODE=mode.dataset.authmode;render();return}
+ if(e.target.closest('[data-auth-back]')){AUTH_ROLE=null;AUTH_MODE='login';render();return}
+ if(e.target.id==='logout'){localStorage.removeItem('athar_current');AUTH_ROLE=null;AUTH_MODE='login';location.hash='';render();toast('You have logged out');return}
+ const r=e.target.closest('[data-role]');if(r){S.role=r.dataset.role;location.hash='';save();render();return}
+ const pk=e.target.closest('[data-pick] button');
+ if(pk){const key=pk.parentNode.dataset.pick,on=pk.getAttribute('aria-pressed')!=='true';pk.setAttribute('aria-pressed',on);
+  if(key!=='nskills'){const a=S.profile[key];S.profile[key]=on?[...a,pk.dataset.v]:a.filter(x=>x!==pk.dataset.v);save();toast('Profile saved. Matches updated.')}return}
+ if(e.target.id==='reset'){localStorage.removeItem('athar');S=seed();location.hash='';render();toast('Demo reset');return}
+ const b=e.target.closest('[data-act]');if(!b)return;const o=get(b.dataset.id),i=b.dataset.i,act=b.dataset.act;
+ if(act==='close')$('#dlg').close();
+ if(act==='open')openDlg(o);
+ if(act==='apply'){if(!mine(o)){const a=currentAccount();o.apps.push({n:a?.name||ME,s:'pending',you:1,email:a?.email||'',phone:a?.phone||''});S.userNotices=S.userNotices||[];S.userNotices.push({id:Date.now(),title:'Application received',body:`Your application for "${o.title}" was submitted to ${o.ngo}. We will notify you when the NGO responds.`,channel:a?.channel||'both',email:a?.email||'',phone:a?.phone||'',time:new Date().toLocaleString(),status:'Demo queued'});save();toast('Application submitted. Receipt queued.')}$('#dlg').open&&$('#dlg').close();render()}
+ if(act==='ok'){o.apps[i].s='confirmed';const a=o.apps[i];S.userNotices=S.userNotices||[];S.userNotices.push({id:Date.now(),title:'Application accepted',body:`${o.ngo} confirmed your place for "${o.title}" (${o.day} ${o.date}, ${o.time}).`,channel:'email and SMS (demo)',email:a.email||'Volunteer email',phone:a.phone||'Volunteer phone',time:new Date().toLocaleString(),status:'Demo queued'});save();toast('Volunteer confirmed. Confirmation queued.');render()}
+ if(act==='att'){o.apps[i].att=1;save();toast('Attendance recorded');render()}
+ if(act==='send'){const el=$('#u'+o.id);if(!el.value.trim()){toast('Write a message first');el.focus();return}
+  if(o.apps.some(a=>a.you))S.notes.push({ngo:o.ngo,t:`${o.title}: ${el.value.trim()}`});save();toast(`Sent to ${o.apps.length} volunteer(s)`);render()}
+ if(act==='plan')toast(`${b.dataset.n}: pilot request noted (demo)`);});
+document.addEventListener('input',e=>{
+ if(e.target.id==='q'){filt.q=e.target.value;$('#list').innerHTML=''; const p=e.target.selectionStart;render();const q=$('#q');q.focus();q.setSelectionRange(p,p)}
+ if(e.target.id==='parea'){S.profile.area=e.target.value;save();toast('Area saved')}});
+document.addEventListener('change',e=>{if(e.target.dataset.f){filt[e.target.dataset.f]=e.target.value;render()}if(e.target.id==='notifyChannel'){const a=currentAccount();if(a){a.channel=e.target.value;updateAccount(a);toast('Notification preference saved')}}});
+
+window.atharAuthSubmit = function(){
+ try {
+  const role=AUTH_ROLE,email=$('#authEmail').value.trim().toLowerCase(),password=$('#authPassword').value,all=accountStore(),error=$('#authError');
+  const fail=m=>{if(error)error.textContent=m;toast(m);};
+  if(!role){fail('Please choose Volunteer or NGO first.');return}
+  if(!email || !$('#authEmail').checkValidity()){fail('Please enter a valid email address.');return}
+  if(password.length<4){fail('Password must be at least 4 characters.');return}
+  if(AUTH_MODE==='signup'){
+   const name=$('#authName').value.trim(),phone=$('#authPhone').value.trim();
+   if(!name){fail('Please enter your name or NGO name.');return}
+   if(!phone){fail('Please enter your phone number.');return}
+   if(all.some(x=>x.email===email && x.role===role)){fail('This email already has an account in this workspace. Please log in.');return}
+   const account={name,phone,email,password,role,channel:'both'};
+   updateAccount(account);S.role=role;save();location.hash=role==='ngo'?'dash':'discover';
+   AUTH_ROLE=null;AUTH_MODE='login';render();toast('Account created. Welcome to ATHAR!');return;
+  }
+  const account=all.find(x=>x.email===email && x.password===password && x.role===role);
+  if(!account){fail('Account not found. Check your email and password, or create an account.');return}
+  updateAccount(account);S.role=role;save();location.hash=role==='ngo'?'dash':'discover';
+  AUTH_ROLE=null;AUTH_MODE='login';render();toast('Login successful. Welcome back!');
+ } catch(err) {
+  const error=$('#authError'),msg='Could not save or open the account. Please allow browser storage and try again.';
+  if(error)error.textContent=msg;toast(msg);
+ }
+};
+
+document.addEventListener('submit',e=>{
+  if(e.target.id==='authForm'){
+  e.preventDefault();
+  const role=AUTH_ROLE,email=$('#authEmail').value.trim().toLowerCase(),password=$('#authPassword').value,all=accountStore(),error=$('#authError');
+  const fail=m=>{if(error)error.textContent=m};
+  if(!role){fail('Choose a workspace first.');return}
+  if(!email||!$('#authEmail').checkValidity()){fail('Enter a valid email address.');return}
+  if(password.length<4){fail('Password must be at least 4 characters.');return}
+  if(AUTH_MODE==='signup'){
+   const name=$('#authName').value.trim(),phone=$('#authPhone').value.trim();
+   if(!name){fail('Enter your name or NGO name.');return}
+   if(!phone){fail('Enter a phone number.');return}
+   if(all.some(x=>x.email===email&&x.role===role)){fail('An account for this email and workspace already exists. Please log in.');return}
+   const account={name,phone,email,password,role,channel:'both'};
+   try{updateAccount(account);S.role=role;save();location.hash=role==='ngo'?'dash':'discover';AUTH_ROLE=null;AUTH_MODE='login';render();toast('Account created successfully')}
+   catch(err){fail('Could not save this account. Check browser storage settings and try again.')}
+   return;
+  }
+  const account=all.find(x=>x.email===email&&x.password===password&&x.role===role);
+  if(!account){fail('No matching account found. Check your details or create an account.');return}
+  try{updateAccount(account);S.role=role;save();location.hash=role==='ngo'?'dash':'discover';AUTH_ROLE=null;AUTH_MODE='login';render();toast('Welcome back to ATHAR')}
+  catch(err){fail('Could not open your account. Please try again.')}
+  return;
+ }
+ if(e.target.id==='loginForm'){
+    e.preventDefault();
+    const email=$('#loginEmail').value.trim(), password=$('#loginPassword').value;
+    if(!email||!password)return;
+    S.role=$('#loginRole').value;save();
+    localStorage.setItem('athar_session','active');
+    location.hash=S.role==='ngo'?'dash':'discover';
+    toast('Welcome to your ATHAR workspace');render();return;
+  }
+  if(e.target.id!=='pf')return;e.preventDefault();
+ const g=id=>$('#'+id).value,sk=[...document.querySelectorAll('[data-pick=nskills] [aria-pressed=true]')].map(b=>b.dataset.v);
+ S.opps.unshift({id:Date.now(),title:g('t'),ngo:MY_NGO,ver:1,area:g('a'),cause:g('c'),skills:sk.length?sk:['Organizing'],day:g('dy'),date:'Soon',time:'To be confirmed',hrs:3,cap:+g('cp'),taken:0,urgent:$('#ur').checked,desc:g('d'),apps:[],ups:[]});
+ save();toast('Published. Matching volunteers can now see it.');location.hash='dash'});
+window.addEventListener('hashchange',render);
+render();
+
+</script>
+</body>
+</html>
